@@ -16,14 +16,14 @@ public class DNS_Question {
 //    void writeBytes(ByteArrayOutputStream, HashMap<String,Integer> domainNameLocations). Write the question bytes which will be sent to the client. The hash map is used for us to compress the message, see the DNSMessage class below.
 //    toString(), equals(), and hashCode() -- Let your IDE generate these. They're needed to use a question as a HashMap key, and to get a human readable string.
 
-    static DNS_Question decodeQuestion(InputStream inputStream, DNS_Message dns_message) throws IOException {
-
-        DNS_Message.readDomainName(inputStream);
-
-
-        byte question = (byte) inputStream.read();
-
-    }
+//    static DNS_Question decodeQuestion(InputStream inputStream, DNS_Message dns_message) throws IOException {
+//
+//        DNS_Message.readDomainName(inputStream);
+//
+//
+//        byte question = (byte) inputStream.read();
+//
+//    }
 //
 //    void writeBytes(ByteArrayOutputStream, HashMap<String,Integer> domainNameLocations) {
 //
