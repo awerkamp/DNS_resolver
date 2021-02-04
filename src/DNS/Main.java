@@ -10,8 +10,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 	// write your code here
-        DNS_Server server = new DNS_Server();
-
+//        DNS_Server server = new DNS_Server();
 
     }
 }
