@@ -1,6 +1,8 @@
 package DNS;
 
+import java.util.AbstractMap;
 import java.util.HashMap;
+import java.util.Map;
 
 public class DNS_Cache {
 
@@ -11,19 +13,37 @@ public class DNS_Cache {
 //    When you look up an entry, if it is too old (its TTL has expired), remove it and return "not found."
 
 
+    static HashMap<DNS_Question, DNS_Record> cache = new HashMap<DNS_Question, DNS_Record>();
 
-//
-    static HashMap<DNS_Question, DNS_Record> cache;
 
-    static DNS_Record query_cache(DNS_Question domain_name) {
-        if (cache.containsKey(domain_name)) {
-            return cache.get(domain_name);  // Todo Update this to remove cache if it's too old, remove it, and return "not found"
-        } else {
-            return cache.get(domain_name);    // Todo Update this to call google, update the cache, and return response
+
+    static DNS_Record get_DNS_record(String domain_name) throws Exception {
+        for (DNS_Question i: cache.keySet()) {
+            if (i.domain_name.equals(domain_name)) {
+                return cache.get(i);
+            }
         }
+        throw new Exception("IP Address Not Found");
+    }
+
+    static boolean has_domain_name(String domain_name) throws Exception {
+        for (DNS_Question i: cache.keySet()) {
+            if (i.domain_name.equals(domain_name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
+    static void add_entry(DNS_Question dns_question, DNS_Record dns_record) {
+        cache.put(dns_question, dns_record);
+    }
 
-
+//        if (cache.containsKey(domain_name)) {
+//            return cache.get(domain_name);  // Todo Update this to remove cache if it's too old, remove it, and return "not found"
+//        } else {
+//            return cache.get(domain_name);    // Todo Update this to call google, update the cache, and return response
+//        }
+//    }
 }

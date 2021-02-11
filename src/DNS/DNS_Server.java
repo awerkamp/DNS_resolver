@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DNS_Server {
 
@@ -18,30 +20,137 @@ public class DNS_Server {
     DatagramSocket socket;
     byte[] b1;
     DatagramPacket dp;
+    String ip_address = "";
 
 
 //    DatagramSocket google_socket;
 //    byte[] b2;
 //    DatagramPacket dp2;
-    InetAddress ip = InetAddress.getByName("8.8.8.8");
+    InetAddress google_ip = InetAddress.getByName("8.8.8.8");
+    InetAddress local_host = InetAddress.getByName("127.0.0.1");
 
-    public DNS_Server() throws IOException {
-        socket = new DatagramSocket(8053);
+
+
+    DatagramPacket set_datagram_data(DatagramPacket dp, ArrayList<Byte> final_message) {
+        byte[] final_message_array = new byte[final_message.size()];
+
+        for (int i = 0; i < final_message.size(); i++) {
+            final_message_array[i] = final_message.get(i);
+        }
+        dp.setData(final_message_array,0,final_message.size());
+
+        return dp;
+    }
+
+
+
+    public DNS_Server() throws Exception {
+
+        byte prev_id = 100;
+        byte current_id;
+
+        socket = new DatagramSocket(8054);
         b1 =  new byte[512];
-        dp = new DatagramPacket(b1, b1.length);
 
-        socket.receive(dp);
-        System.out.println("printing dp " + dp);
-        b1 = dp.getData();
-        System.out.println("printing b1 " + b1);
+        while (true) {
 
-        InputStream myInputStream = new ByteArrayInputStream(b1);
+            dp = new DatagramPacket(b1, b1.length);
+            socket.receive(dp);
+            b1 = dp.getData();
 
-        DNS_Header dns_header = DNS_Header.decodeHeader(myInputStream);
+            current_id = b1[1];
+            if (current_id == prev_id) {
+                System.out.println("Waiting for a new packet");
 
-        DNS_Message dns_message = new DNS_Message();
+            } else {
+                prev_id = current_id;
+                System.out.println("ID " + current_id);
 
-        dns_message.readDomainName(myInputStream);
+                DNS_Message dns_message_question = new DNS_Message();
+                dns_message_question.decode_message(b1);
+                String domain_name = dns_message_question.dns_question.get(0).domain_name;
+
+
+                if (DNS_Cache.has_domain_name(domain_name)) {   // Todo where I am currently working // Need to add things to cache
+
+                    DNS_Record dns_record = DNS_Cache.get_DNS_record(domain_name);
+
+                    DatagramPacket dp_new = new DatagramPacket(b1, b1.length);
+//                    dp_new.setPort(8054);
+//                    dp_new.setAddress(local_host);
+
+                    dp_new = dp;
+
+                    ArrayList<Byte> header = dns_message_question.dns_header.get(0).encoded_output;
+                    ArrayList<Byte> question = dns_message_question.dns_question.get(0).encoded_output;
+                    ArrayList<Byte> record = dns_record.encoded_output;
+
+                    ArrayList<Byte> final_message = new ArrayList<Byte>(header);
+                    final_message.addAll(question);
+                    final_message.addAll(record);
+
+                    dp_new = set_datagram_data(dp_new, final_message);
+
+                    System.out.println(Arrays.toString(dp_new.getData()));
+
+                    System.out.println("CACHE HAS DOMAIN - SENDING TO CLIENT");
+
+                    socket.send(dp_new);
+                    // Todo send record to client
+
+
+                } else {
+
+                    dp.setPort(53);
+                    dp.setAddress(google_ip);
+
+                    socket.send(dp);
+                    System.out.println("CACHE DOESN'T HAVE DOMAIN - REQUESTING FROM GOOGLE");
+
+                    DatagramPacket dp2 = new DatagramPacket(b1, b1.length);
+                    socket.receive(dp2);
+
+                    DNS_Message dns_message_google_response = new DNS_Message();
+
+                    dns_message_google_response.decode_message(b1);
+
+                    DNS_Cache.add_entry(dns_message_google_response.dns_question.get(0), dns_message_google_response.dns_record.get(0));
+
+                    System.out.println("FORWARDING GOOGLE RESPONSE TO CLIENT");
+
+
+
+                    dp.setPort(8054);
+                    dp.setAddress(local_host);
+
+                    socket.send(dp);
+
+
+                }
+
+
+
+//                InputStream myInputStream2 = new ByteArrayInputStream(b1);
+//
+//                DNS_Header.decodeHeader(myInputStream2);
+//
+//                DNS_Question dns_question2 = new DNS_Question();
+//
+//                dns_question2.decodeQuestion(myInputStream2);
+//
+//                DNS_Record dns_record2 = new DNS_Record();
+//
+//                dns_record2.decodeRecord(myInputStream2);
+//
+//                System.out.println(dns_question2.domain_name);
+//                System.out.println(dns_record2.ip_address);
+            }
+        }
+
+
+
+//        dns_message.readDomainName(myInputStream);
+
 
 //        DNS_Question dns_quesiton = DNS_Question.decodeQuestion(myInputStream, );
 
@@ -51,7 +160,7 @@ public class DNS_Server {
 //
 //        dp.setPort(53);
 //        dp.setAddress(ip);
-////        System.out.println("here");
+//        System.out.println("here");
 ////
 ////        DatagramSocket google_socket = new DatagramSocket(8053);
 //        socket.send(dp);
@@ -65,9 +174,18 @@ public class DNS_Server {
 //
 //        DNS_Header dns_header2 = DNS_Header.decodeHeader(myInputStream2);
 //
-//        System.out.println(dns_header2.toString());
+//        DNS_Message dns_message2 = new DNS_Message();
+//
+//        DNS_Question dns_question1 = new DNS_Question();
+//
+//        dns_question1.decodeQuestion(myInputStream2, dns_message2);
+//
+//        DNS_Record.decodeRecord(myInputStream2, dns_message2);
 
 
+//
+/////////////////////////////////////////////////////////
+//
 //        b2 = new byte[512];
 //        dp2 = new DatagramPacket(b2, b2.length, ip, 8054);
 //        google_socket.send(dp2);

@@ -1,5 +1,6 @@
 package DNS;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,18 +9,16 @@ import java.util.HashMap;
 
 public class DNS_Message {
 
-    static ArrayList<Byte> header = new ArrayList<>();
-    static ArrayList<Byte> questions = new ArrayList<>();
-    static ArrayList<Byte> answers = new ArrayList<>();
-    static ArrayList<Byte> authority_records = new ArrayList<>();
-    static ArrayList<Byte> additional_records = new ArrayList<>();
+//    ArrayList<Byte> complete_message = new ArrayList<>();
 
-    static ArrayList<Byte> complete_message = new ArrayList<>();
-
+    ArrayList<DNS_Header> dns_header = new ArrayList<>();
+    ArrayList<DNS_Question> dns_question = new ArrayList<>();
+    ArrayList<DNS_Record> dns_record = new ArrayList<>();
 
     static byte get_next_byte(InputStream inputStream, ArrayList<Byte> message_part) throws IOException {
         byte next_byte = (byte) inputStream.read();
-        complete_message.add(next_byte);
+        System.out.println(next_byte);
+//        complete_message.add(next_byte);
         message_part.add(next_byte);
         return next_byte;
     }
@@ -66,39 +65,45 @@ public class DNS_Message {
 //        System.out.println("test");
 //    }
 
+    // Changed to static
 
-    static String[] readDomainName(InputStream inputStream) throws IOException {  // Changed to static because just helping DNS_question calss
 
-        final int DOMAIN_PARTS_SUPPORTED = 5;
-        String[] domain_name = new String[DOMAIN_PARTS_SUPPORTED];
+    void decode_message(byte[] b1) throws IOException {
 
-        String domain_part = "";
-        byte next_byte = get_next_byte(inputStream, questions);
-        byte length = next_byte; // This first byte gives length of the first part of the domain name
-        int num_of_loops = 0;
+        InputStream myInputStream = new ByteArrayInputStream(b1);
 
-        while (next_byte != 0) {
+        DNS_Header dns_header = new DNS_Header();
+        dns_header.decode(myInputStream);
+        dns_header.encode();
+        this.dns_header.add(dns_header);
 
-            for (int i = 0; i < length; i++) {
-                next_byte = get_next_byte(inputStream, questions);
-                domain_part += (char) next_byte;
-            }
-            domain_name[num_of_loops] = domain_part; // Add the next part of the domain to the domain name
-            domain_part = "";
-            next_byte = get_next_byte(inputStream, questions); // gives the length of the next part of the domain name or 0 if end
-            length = next_byte;
-            num_of_loops += 1;
-        }
+        DNS_Question dns_question = new DNS_Question();
+        dns_question.decode(myInputStream);
+        dns_question.encode();
+        this.dns_question.add(dns_question);
 
-        for (int i = 0; i < num_of_loops; i++) {
-            System.out.println(domain_name[i]);
-        }
+        DNS_Record dns_record = new DNS_Record();
+        dns_record.decode(myInputStream);
+        this.dns_record.add(dns_record);
 
-        return domain_name;
+        System.out.println(dns_question.domain_name);
+        System.out.println(dns_record.ip_address);
     }
+
+
+//    static DNSMessage buildResponse(DNSMessage request, DNSRecord[] answers) {
+//
+//    }
+
+
 //
 //    String[] readDomainName(int firstByte) {
 //
+//        // Todo create an input stream starting at the first byte passed in and pass it to readDomainName
+//        InputStream newStream = new ByteArrayInputStream()
+//
+//        String[] bob ={"hello"};
+//        return bob;
 //    }
 //
     // NDS_RECORD[] is always coming from cache or sometimes adding from google
@@ -114,10 +119,7 @@ public class DNS_Message {
 //
 //    }
 //
-    String octetsToString(String[] octets) {
 
-        return octets[0] + "." + octets[1];
-    }
 //
 //    @Override
 //    public String toString() {

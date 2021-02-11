@@ -8,9 +8,14 @@ import java.net.http.HttpRequest;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
 	// write your code here
-//        DNS_Server server = new DNS_Server();
+
+
+
+
+
+        DNS_Server server = new DNS_Server();
 
     }
 }
