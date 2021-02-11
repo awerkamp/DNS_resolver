@@ -91,21 +91,4 @@ public class DNS_Record extends Decode {
         encoded_output.add(r_data_3);
         encoded_output.add(r_data_4);
     }
-
-    //todo add the ability to add additional records. Copy from Google's response on query?
-
-//
-//
-//    void writeBytes(ByteArrayOutputStream, HashMap<String, Integer>) {
-//
-//    }
-//
-//    @Override
-//    public String toString() {
-//        return super.toString();
-//    }
-//
-//    boolean timestampValid() {
-//        return false;
-//    }
 }

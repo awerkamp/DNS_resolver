@@ -11,13 +11,6 @@ public class DNS_Question extends Decode {
     String domain_name = "";
     int domain_name_parts = 0;
 
-//    This class represents a client request. It should have the following public methods:
-//
-//    static DNSQuestion decodeQuestion(InputStream, DNSMessage) -- read a question from the input stream. Due to compression, you may have to ask the DNSMessage containing this question to read some of the fields.
-//    void writeBytes(ByteArrayOutputStream, HashMap<String,Integer> domainNameLocations). Write the question bytes which will be sent to the client. The hash map is used for us to compress the message, see the DNSMessage class below.
-//    toString(), equals(), and hashCode() -- Let your IDE generate these. They're needed to use a question as a HashMap key, and to get a human readable string.
-
-
     void octetsToString(String[] octets, DNS_Question dns_question) {
 
         for (int i = 0; i < dns_question.domain_name_parts; i++) {
@@ -27,9 +20,6 @@ public class DNS_Question extends Decode {
              }
         }
     }
-
-
-
     public void decode(InputStream inputStream) throws IOException {
 
         String[] name = readDomainName(inputStream, this);
@@ -76,17 +66,4 @@ public class DNS_Question extends Decode {
 
         return domain_name;
     }
-//
-//    void writeBytes(ByteArrayOutputStream, HashMap<String,Integer> domainNameLocations) {
-//
-//    }
-//
-//
-//    @Override
-//    public String toString() {
-//        return "DNS_Question{}";
-//    }
-
-
-
 }
