@@ -16,7 +16,6 @@ public class DNS_Message {
     static byte get_next_byte(InputStream inputStream, ArrayList<Byte> message_part) throws IOException {
         byte next_byte = (byte) inputStream.read();
         System.out.println(next_byte);
-//        complete_message.add(next_byte);
         message_part.add(next_byte);
         return next_byte;
     }

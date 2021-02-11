@@ -9,27 +9,9 @@ import java.util.HashMap;
 public class DNS_Record extends Decode {
 
     String ip_address = "";
-    ArrayList<Byte> decoded_domain_name = new ArrayList<>();
-
-
-    // todo add a Date object when program is created
-//    public byte[] ip_address = new byte[4];
-
-//    Everything after the header and question parts of the DNS message are stored as records.
-//    This should have all the fields listed in the spec as well as a Date object storing when
-//    this record was created by your program. It should also have the following public methods:
-//
-//    static DNSRecord decodeRecord(InputStream, DNSMessage)
-//    writeBytes(ByteArrayOutputStream, HashMap<String, Integer>)
-//    String toString()
-// todo    boolean timestampValid() -- return whether the creation date + the time to live is after
-//    the current time. The Date and Calendar classes will be useful for this.
-
 
     // MAke void instead of returning DNS_Record
     void decode(InputStream inputStream) throws IOException {
-
-
 
         for (int i = 0; i < 11; i++) {
             byte num = DNS_Message.get_next_byte(inputStream, decoded_input);

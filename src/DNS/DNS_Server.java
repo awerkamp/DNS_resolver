@@ -1,8 +1,5 @@
 package DNS;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +9,6 @@ public class DNS_Server {
     DatagramSocket socket;
     byte[] b1;
     DatagramPacket dp;
-    String ip_address = "";
 
     InetAddress google_ip = InetAddress.getByName("8.8.8.8");
     InetAddress local_host = InetAddress.getByName("127.0.0.1");
@@ -27,7 +23,6 @@ public class DNS_Server {
 
         return dp;
     }
-
 
     public DNS_Server() throws Exception {
 
@@ -56,15 +51,13 @@ public class DNS_Server {
                 String domain_name = dns_message_question.dns_question.get(0).domain_name;
 
 
-                if (DNS_Cache.has_domain_name(domain_name)) {   // Todo where I am currently working // Need to add things to cache
+                if (DNS_Cache.has_domain_name(domain_name)) {
 
                     DNS_Record dns_record = DNS_Cache.get_DNS_record(domain_name);
 
                     DatagramPacket dp_new = new DatagramPacket(b1, b1.length);
                     dp_new.setPort(8054);
                     dp_new.setAddress(local_host);
-
-//                    dp_new = dp;
 
                     ArrayList<Byte> header = dns_message_question.dns_header.get(0).encoded_output;
                     ArrayList<Byte> question = dns_message_question.dns_question.get(0).encoded_output;

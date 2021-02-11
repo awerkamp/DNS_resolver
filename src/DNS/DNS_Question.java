@@ -1,10 +1,7 @@
 package DNS;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class DNS_Question extends Decode {
 
@@ -46,7 +43,7 @@ public class DNS_Question extends Decode {
         byte length = next_byte; // This first byte gives length of the first part of the domain name
         int num_of_loops = 0;
 
-        while (next_byte != 0) {  // todo this needs to be in a for loop?
+        while (next_byte != 0) {
 
             for (int i = 0; i < length; i++) {
                 next_byte = DNS_Message.get_next_byte(inputStream, decoded_input);
